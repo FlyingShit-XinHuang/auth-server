@@ -1,0 +1,9 @@
+FROM iron/go:1.7
+
+ADD ./manage /app/
+
+WORKDIR /app
+
+RUN chmod +x manage
+
+ENTRYPOINT ["./manage"]

@@ -1,0 +1,9 @@
+FROM iron/go:1.7
+
+ADD ./auth /app/
+
+WORKDIR /app
+
+RUN chmod +x auth
+
+ENTRYPOINT ["./auth"]

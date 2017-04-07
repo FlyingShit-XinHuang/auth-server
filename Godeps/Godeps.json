@@ -1,0 +1,99 @@
+{
+	"ImportPath": "whispir/auth-server",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"whispir/auth-server/examples/cmd/resources"
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/RangelReale/osin",
+			"Rev": "e09d96c151a3b30cf01c064f06bf50489fb5efcf"
+		},
+		{
+			"ImportPath": "github.com/RangelReale/osincli",
+			"Rev": "fababb0555f21315d1a34af6615a16eaab44396b"
+		},
+		{
+			"ImportPath": "github.com/ansel1/merry",
+			"Comment": "v1.0.0",
+			"Rev": "c117be056e0013c04fd7c4141a4dd68672943526"
+		},
+		{
+			"ImportPath": "github.com/felipeweb/gopher-utils",
+			"Rev": "05a00fc86ef51b7b351fb05a0e13307c85dbe115"
+		},
+		{
+			"ImportPath": "github.com/felipeweb/osin-mysql",
+			"Rev": "2c6b0250022a5f71d6ebbbed16452541286bcca2"
+		},
+		{
+			"ImportPath": "github.com/go-errors/errors",
+			"Rev": "8fa88b06e5974e97fbf9899a7f86a344bfd1f105"
+		},
+		{
+			"ImportPath": "github.com/go-kit/kit/endpoint",
+			"Comment": "v0.4.0-24-g5d93a23",
+			"Rev": "5d93a23737003ed3ad90359f0aeb25e08dfdf547"
+		},
+		{
+			"ImportPath": "github.com/go-kit/kit/log",
+			"Comment": "v0.4.0-24-g5d93a23",
+			"Rev": "5d93a23737003ed3ad90359f0aeb25e08dfdf547"
+		},
+		{
+			"ImportPath": "github.com/go-kit/kit/transport/http",
+			"Comment": "v0.4.0-24-g5d93a23",
+			"Rev": "5d93a23737003ed3ad90359f0aeb25e08dfdf547"
+		},
+		{
+			"ImportPath": "github.com/go-logfmt/logfmt",
+			"Comment": "v0.3.0",
+			"Rev": "390ab7935ee28ec6b286364bba9b4dd6410cb3d5"
+		},
+		{
+			"ImportPath": "github.com/go-sql-driver/mysql",
+			"Comment": "v1.3-6-g9dee4ca",
+			"Rev": "9dee4ca50b83acdf57a35fb9e6fb4be640afa2f3"
+		},
+		{
+			"ImportPath": "github.com/go-stack/stack",
+			"Comment": "v1.5.2",
+			"Rev": "100eb0c0a9c5b306ca2fb4f165df21d80ada4b82"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Comment": "v1.3.0-5-g599cba5",
+			"Rev": "599cba5e7b6137d46ddf58fb1765f5d928e69604"
+		},
+		{
+			"ImportPath": "github.com/inconshreveable/mousetrap",
+			"Rev": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
+		},
+		{
+			"ImportPath": "github.com/kr/logfmt",
+			"Rev": "b84e30acd515aadc4b783ad4ff83aff3299bdfe0"
+		},
+		{
+			"ImportPath": "github.com/pborman/uuid",
+			"Comment": "v1.0-21-g1b00554",
+			"Rev": "1b00554d822231195d1babd97ff4a781231955c9"
+		},
+		{
+			"ImportPath": "github.com/spf13/cobra",
+			"Rev": "7be4beda01ec05d0b93d80b3facd2b6f44080d94"
+		},
+		{
+			"ImportPath": "github.com/spf13/pflag",
+			"Rev": "9ff6c6923cfffbcd502984b8e0c80539a94968b7"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "6c23252515492caf9b228a9d5cabcdbde29f7f82"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context/ctxhttp",
+			"Rev": "6c23252515492caf9b228a9d5cabcdbde29f7f82"
+		}
+	]
+}
