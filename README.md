@@ -51,9 +51,9 @@ $ docker run -d --rm --network=container:mysql auth-server
 The container starts with '--network=container:mysql' parameter so that the server could share the same network with 
 mysql container and query it with localhost. 
 
-The server serve the port 18080. As you can see, it is published by the mysql container.
+The server serves the port 18080. As you can see, it is published by the mysql container.
 
-## Create a client an user
+## Create a client and user
 
 OAuth 2 is applied in the situations of authorizing the rights of users' resources to a client. So a client and a user 
 should be created before we could continue this demo.
