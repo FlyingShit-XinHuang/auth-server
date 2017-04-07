@@ -1,4 +1,5 @@
 .idea/
 auth
+!auth/
 auth-server
 manage
