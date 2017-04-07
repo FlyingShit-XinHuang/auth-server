@@ -3,3 +3,4 @@ auth
 !auth/
 auth-server
 manage
+!manage/
