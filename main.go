@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	store := mysql.NewStorageOrDie("root", "demo", "localhost", 3306, "demo")
+	store := mysql.NewStorageOrDie("root", "demo", "mysql", 3306, "demo")
 	authSvc := auth.NewBasicService(store)
 	clientSvc := client.NewBasicService(store)
 	userSvc := user.NewBasiceService(store)
@@ -22,6 +22,6 @@ func main() {
 	r.AddHandlers(client.NewHTTPTransport(clientSvc))
 	r.AddHandlers(user.NewHTTPTransport(userSvc))
 
-	log.Println("Listening 18080")
-	log.Fatal(http.ListenAndServe(":18080", r))
+	log.Println("Listening 18081")
+	log.Fatal(http.ListenAndServe(":18081", r))
 }

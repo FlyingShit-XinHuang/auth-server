@@ -20,13 +20,13 @@ All resources the server needs are stored in Mysql, so we should start a Mysql s
 database:
 
 ```
-$ docker run -e MYSQL_ROOT_PASSWORD=demo -p 3306:3306 -p 18080:18080 -p 14000:14000 -d --rm --name mysql mysql:5.7
+$ docker run -e MYSQL_ROOT_PASSWORD=demo -p 3307:3307 -p 18080:18080 -p 14000:14000 -d --rm --name mysql mysql:5.7
 06142e803c1d556b0d1e907bd72e2855e5319fb321b2ee62233d16107aac2e4a
 
-$ docker exec -ti mysql mysql -hlocalhost -P3306 -uroot -pdemo -e "create database demo"
+$ docker exec -ti mysql mysql -hlocalhost -P3307 -uroot -pdemo -e "create database demo"
 mysql: [Warning] Using a password on the command line interface can be insecure.
 
-$ docker exec -ti mysql mysql -hlocalhost -P3306 -uroot -pdemo -e "show databases"
+$ docker exec -ti mysql mysql -hlocalhost -P3307 -uroot -pdemo -e "show databases"
 mysql: [Warning] Using a password on the command line interface can be insecure.
 +--------------------+
 | Database           |

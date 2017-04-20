@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: auth-server
+  name: auth-server
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-server
+  template:
+    metadata:
+      labels:
+        app: auth-server
+      name: auth-server
+    spec:
+      containers:
+      - image: auth-server
+        imagePullPolicy: IfNotPresent
+        name: auth-server
+      - image: demo-manage
+        imagePullPolicy: IfNotPresent
+        name: demo-manage
+      - image: demo-auth
+        imagePullPolicy: IfNotPresent
+        name: demo-auth
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30

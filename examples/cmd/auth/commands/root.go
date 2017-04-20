@@ -35,7 +35,7 @@ func preRunE() error {
 	}
 	u := url.URL{
 		Scheme: RootOpts.Scheme,
-		Host:   "localhost:18080",
+		Host:   "localhost:18081",
 		Path:   auth.TokenPath,
 	}
 	RootOpts.TokenUrl = u.String()
