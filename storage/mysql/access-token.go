@@ -12,7 +12,7 @@ import (
 	"whispir/auth-server/pkg/api/v1alpha1"
 )
 
-// nothing to save because info are stored in JWT
+// nothing to be saved because info are stored in JWT
 func (s *mysqlStorage) SaveAccess(*osin.AccessData) error {
 	return nil
 }

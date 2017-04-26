@@ -28,6 +28,9 @@ var (
 			if len(args) < 1 {
 				return fmt.Errorf("missing arguments")
 			}
+			if err := parseServerHost(); nil != err {
+				return err
+			}
 			clientOpts.client = &v1alpha1.Client{
 				Name:        args[0],
 				RedirectURL: commands.RedirectURL,
@@ -51,6 +54,9 @@ var (
 		PreRunE: func(_ *cobra.Command, args []string) error {
 			if len(args) < 2 {
 				return fmt.Errorf("missing arguments")
+			}
+			if err := parseServerHost(); nil != err {
+				return err
 			}
 			userOpts.user = &v1alpha1.User{
 				Name:     args[0],
@@ -97,7 +103,6 @@ func init()  {
 
 func init() {
 	var err error
-	serviceURI, err = url.Parse(fmt.Sprintf("http://%s:%d", createOpts.host, createOpts.port))
 	if nil != err {
 		panic(err)
 	}
@@ -106,4 +111,9 @@ func init() {
 
 	createCmd.AddCommand(&clientCmd)
 	createCmd.AddCommand(&userCmd)
+}
+
+func parseServerHost() (err error) {
+	serviceURI, err = url.Parse(fmt.Sprintf("http://%s:%d", createOpts.host, createOpts.port))
+	return
 }
