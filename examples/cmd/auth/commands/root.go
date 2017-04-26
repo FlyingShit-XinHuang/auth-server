@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"net/url"
 	"whispir/auth-server/services/auth"
+	"path"
 )
 
 var (
@@ -16,6 +17,9 @@ var (
 	RootOpts struct {
 		Scheme string
 		osincli.ClientConfig
+		host string
+		port int
+		pathPrefix string
 	}
 )
 
@@ -27,6 +31,14 @@ func init() {
 	RootCmd.PersistentFlags().StringVar(&RootOpts.ClientSecret,
 		"client-secret", "", "Client secret")
 
+
+	RootCmd.PersistentFlags().StringVarP(&RootOpts.host,
+		"host", "H", "localhost", "auth-server host")
+	RootCmd.PersistentFlags().IntVarP(&RootOpts.port,
+		"port", "P", 18080, "auth-server port")
+	RootCmd.PersistentFlags().StringVarP(&RootOpts.pathPrefix,
+		"prefix", "p", "/", "Prefix of path of request")
+
 }
 
 func preRunE() error {
@@ -35,12 +47,12 @@ func preRunE() error {
 	}
 	u := url.URL{
 		Scheme: RootOpts.Scheme,
-		Host:   "localhost:18081",
-		Path:   auth.TokenPath,
+		Host:   fmt.Sprintf("%s:%d", RootOpts.host, RootOpts.port),
+		Path:   path.Join(RootOpts.pathPrefix, auth.TokenPath),
 	}
 	RootOpts.TokenUrl = u.String()
 
-	u.Path = auth.AuthPath
+	u.Path = path.Join(RootOpts.pathPrefix, auth.AuthPath)
 	RootOpts.AuthorizeUrl = u.String()
 
 	RootOpts.RedirectUrl = RedirectURL

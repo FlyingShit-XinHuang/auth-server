@@ -2,17 +2,10 @@
 	"ImportPath": "whispir/auth-server",
 	"GoVersion": "go1.8",
 	"GodepVersion": "v79",
-	"Packages": [
-		"whispir/auth-server/examples/cmd/resources"
-	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/RangelReale/osin",
 			"Rev": "e09d96c151a3b30cf01c064f06bf50489fb5efcf"
-		},
-		{
-			"ImportPath": "github.com/RangelReale/osincli",
-			"Rev": "fababb0555f21315d1a34af6615a16eaab44396b"
 		},
 		{
 			"ImportPath": "github.com/ansel1/merry",
@@ -20,12 +13,9 @@
 			"Rev": "c117be056e0013c04fd7c4141a4dd68672943526"
 		},
 		{
-			"ImportPath": "github.com/felipeweb/gopher-utils",
-			"Rev": "05a00fc86ef51b7b351fb05a0e13307c85dbe115"
-		},
-		{
-			"ImportPath": "github.com/felipeweb/osin-mysql",
-			"Rev": "2c6b0250022a5f71d6ebbbed16452541286bcca2"
+			"ImportPath": "github.com/dgrijalva/jwt-go",
+			"Comment": "v3.0.0-17-g2268707",
+			"Rev": "2268707a8f0843315e2004ee4f1d021dc08baedf"
 		},
 		{
 			"ImportPath": "github.com/go-errors/errors",

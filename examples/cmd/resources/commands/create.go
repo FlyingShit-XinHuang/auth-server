@@ -10,6 +10,7 @@ import (
 	"whispir/auth-server/pkg/api/v1alpha1"
 	"whispir/auth-server/services/client"
 	"whispir/auth-server/services/user"
+	"path"
 )
 
 var (
@@ -31,7 +32,7 @@ var (
 				Name:        args[0],
 				RedirectURL: commands.RedirectURL,
 			}
-			serviceURI.Path = client.CreateClientPath
+			serviceURI.Path = path.Join(createOpts.pathPrefix, client.CreateClientPath)
 			return nil
 		},
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -55,7 +56,7 @@ var (
 				Name:     args[0],
 				Password: args[1],
 			}
-			serviceURI.Path = user.CreateUserPath
+			serviceURI.Path = path.Join(createOpts.pathPrefix, user.CreateUserPath)
 			return nil
 		},
 		RunE: func(_ *cobra.Command, args []string) error {
@@ -66,6 +67,12 @@ var (
 			fmt.Println("Success")
 			return nil
 		},
+	}
+
+	createOpts struct {
+		host string
+		port int
+		pathPrefix string
 	}
 
 	clientOpts struct {
@@ -79,9 +86,18 @@ var (
 	serviceURI *url.URL
 )
 
+func init()  {
+	createCmd.PersistentFlags().StringVarP(&createOpts.host,
+		"host", "H", "localhost", "auth-server host")
+	createCmd.PersistentFlags().IntVarP(&createOpts.port,
+		"port", "P", 18080, "auth-server port")
+	createCmd.PersistentFlags().StringVarP(&createOpts.pathPrefix,
+		"prefix", "p", "/", "Prefix of path of request")
+}
+
 func init() {
 	var err error
-	serviceURI, err = url.Parse("http://localhost:18080")
+	serviceURI, err = url.Parse(fmt.Sprintf("http://%s:%d", createOpts.host, createOpts.port))
 	if nil != err {
 		panic(err)
 	}
