@@ -10,4 +10,5 @@ type OAuth2Storage interface {
 	CreateClient(client *v1alpha1.Client) error
 	CreateUser(user *v1alpha1.User) error
 	GetUserByNameAndPassword(name, password string) (*v1alpha1.User, error)
+	GetUserById(id int) (*v1alpha1.User, error)
 }

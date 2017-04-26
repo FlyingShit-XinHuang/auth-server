@@ -7,16 +7,16 @@ import (
 
 	httptransport "github.com/go-kit/kit/transport/http"
 
+	"whispir/auth-server/pkg/api/v1alpha1"
 	"whispir/auth-server/pkg/encoding"
 	"whispir/auth-server/storage"
-	"whispir/auth-server/pkg/api/v1alpha1"
 )
 
 type Service interface {
 	CreateUser(*v1alpha1.User) error
 }
 
-type userService struct{
+type userService struct {
 	storage storage.OAuth2Storage
 }
 

@@ -7,7 +7,14 @@ import (
 	"fmt"
 	"net/http"
 
+	"whispir/auth-server/pkg/api/v1alpha1"
 	"whispir/auth-server/storage"
+	"whispir/auth-server/pkg/jwt"
+)
+
+const (
+	AUTH_CODE_EXPIRE = 180
+	TOKEN_EXPIRT     = 3600
 )
 
 type Service interface {
@@ -19,15 +26,23 @@ type Service interface {
 func NewBasicService(storage storage.OAuth2Storage) Service {
 	cfg := osin.NewServerConfig()
 	cfg.AllowedAccessTypes = osin.AllowedAccessType{osin.AUTHORIZATION_CODE, osin.PASSWORD, osin.CLIENT_CREDENTIALS}
+	cfg.AuthorizationExpiration = AUTH_CODE_EXPIRE
+	cfg.AccessExpiration = TOKEN_EXPIRT
+
+	// set jwt generator
+	server := osin.NewServer(cfg, storage)
+	server.AccessTokenGen = jwt.NewAccessTokenGenerator()
+	server.AuthorizeTokenGen = jwt.NewAuthCodeGenerator()
+
 	return &authService{
-		osin.NewServer(cfg, storage),
+		server,
 		storage,
 	}
 }
 
-type authService struct{
+type authService struct {
 	osinServer *osin.Server
-	storage storage.OAuth2Storage
+	storage    storage.OAuth2Storage
 }
 
 func (a *authService) GetAccessToken(req *http.Request) (resp *osin.Response) {
@@ -40,14 +55,17 @@ func (a *authService) GetAccessToken(req *http.Request) (resp *osin.Response) {
 
 	if ar := a.osinServer.HandleAccessRequest(resp, req); ar != nil {
 		if osin.PASSWORD == ar.Type {
-			ok, err := a.validateUser(ar.Username, ar.Password)
+			user, err := a.validateUser(ar.Username, ar.Password)
 			if nil != err {
 				resp.SetError(osin.E_SERVER_ERROR, "")
 				return
 			}
-			if !ok {
+			if nil == user {
 				resp.SetError(osin.E_INVALID_GRANT, "invalid username or password")
 				return
+			}
+			ar.UserData = &v1alpha1.User{
+				Id: user.Id,
 			}
 		}
 		ar.GenerateRefresh = false
@@ -61,6 +79,9 @@ func (a *authService) Info(req *http.Request) *osin.Response {
 	resp := a.osinServer.NewResponse()
 	if ir := a.osinServer.HandleInfoRequest(resp, req); ir != nil {
 		a.osinServer.FinishInfoRequest(resp, req, ir)
+		if user, ok := ir.AccessData.UserData.(*v1alpha1.User); ok && nil != user && user.Id > 0 {
+			resp.Output["user_id"] = user.Id
+		}
 	}
 	if resp.IsError && resp.InternalError != nil {
 		fmt.Printf("ERROR: %s\n", resp.InternalError)
@@ -76,13 +97,14 @@ func (a *authService) GetAuthCode(req *http.Request) (*osin.Response, []byte) {
 			return nil, authPage(req.URL.RawQuery, ar.Client.GetUserData().(string))
 		}
 		req.ParseForm()
-		ok, err := a.validateUser(req.Form.Get("user"), req.Form.Get("password"))
+		user, err := a.validateUser(req.Form.Get("user"), req.Form.Get("password"))
 		if nil != err {
 			resp.SetError(osin.E_SERVER_ERROR, "")
-		} else if !ok {
+		} else if nil == user {
 			resp.SetError(osin.E_ACCESS_DENIED, "invalid username or password")
 		} else {
 			ar.Authorized = true
+			ar.UserData = user
 			a.osinServer.FinishAuthorizeRequest(resp, req, ar)
 		}
 	}
@@ -103,10 +125,10 @@ func authPage(query, name string) []byte {
 	return buf.Bytes()
 }
 
-func (a *authService) validateUser(name, password string) (bool, error) {
+func (a *authService) validateUser(name, password string) (*v1alpha1.User, error) {
 	user, err := a.storage.GetUserByNameAndPassword(name, password)
 	if nil != err {
-		return false, err
+		return nil, err
 	}
-	return nil != user, nil
+	return user, nil
 }

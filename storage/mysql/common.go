@@ -1,8 +1,6 @@
 package mysql
 
 import (
-	omysql "github.com/felipeweb/osin-mysql"
-
 	_ "github.com/go-sql-driver/mysql"
 
 	"whispir/auth-server/storage"
@@ -23,14 +21,20 @@ var schemas = []string{`CREATE TABLE IF NOT EXISTS {prefix}users (
 	name		varchar(255) NOT NULL,
 	password	varchar(255) NOT NULL,
 	UNIQUE INDEX users_index (name)
+)`, `CREATE TABLE IF NOT EXISTS {prefix}client (
+	id           varchar(255) NOT NULL PRIMARY KEY,
+	secret 		 varchar(255) NOT NULL,
+	extra 		 varchar(255) NOT NULL,
+	redirect_uri varchar(255) NOT NULL
 )`,
 }
 
 const tabPrefix = "whispir_"
 
+var notFoundError = merry.New("Not found")
+
 type mysqlStorage struct {
 	db *sql.DB
-	*omysql.Storage
 }
 
 func NewStorageOrDie(user, password, host string, port int, dbname string) storage.OAuth2Storage {
@@ -50,8 +54,7 @@ func NewStorage(user, password, host string, port int, dbname string) (storage.O
 	}
 
 	store := &mysqlStorage{
-		db:      handle,
-		Storage: omysql.New(handle, tabPrefix),
+		db: handle,
 	}
 
 	if err := store.createSchemas(); nil != err {
@@ -61,9 +64,6 @@ func NewStorage(user, password, host string, port int, dbname string) (storage.O
 }
 
 func (s *mysqlStorage) createSchemas() error {
-	if err := s.CreateSchemas(); nil != err {
-		return err
-	}
 	for k, schema := range schemas {
 		schema := strings.Replace(schema, "{prefix}", tabPrefix, 4)
 		if _, err := s.db.Exec(schema); err != nil {
@@ -72,6 +72,14 @@ func (s *mysqlStorage) createSchemas() error {
 		}
 	}
 	return nil
+}
+
+func (s *mysqlStorage) Clone() osin.Storage {
+	return s
+}
+
+// Close the resources the Storage potentially holds (using Clone for example)
+func (s *mysqlStorage) Close() {
 }
 
 func (s *mysqlStorage) CreateUser(user *v1alpha1.User) error {
@@ -85,17 +93,45 @@ func (s *mysqlStorage) CreateUser(user *v1alpha1.User) error {
 }
 
 func (s *mysqlStorage) CreateClient(client *v1alpha1.Client) error {
-	return s.Storage.CreateClient(&osin.DefaultClient{
-		Id:          client.Id,
-		Secret:      client.Secret,
-		RedirectUri: client.RedirectURL,
-		UserData:    client.Name,
-	})
+	if _, err := s.db.Exec(
+		fmt.Sprintf("INSERT INTO %sclient (id, secret, redirect_uri, extra) VALUES (?, ?, ?, ?)", tabPrefix),
+		client.Id, client.Secret, client.RedirectURL, client.Name); err != nil {
+
+		return merry.Wrap(err)
+	}
+	return nil
+}
+
+func (s *mysqlStorage) GetClient(id string) (osin.Client, error) {
+	row := s.db.QueryRow(fmt.Sprintf("SELECT id, secret, redirect_uri, extra FROM %sclient WHERE id=?", tabPrefix), id)
+	var c osin.DefaultClient
+	var extra string
+
+	if err := row.Scan(&c.Id, &c.Secret, &c.RedirectUri, &extra); err == sql.ErrNoRows {
+		return nil, notFoundError
+	} else if err != nil {
+		return nil, merry.Wrap(err)
+	}
+	c.UserData = extra
+	return &c, nil
 }
 
 func (s *mysqlStorage) GetUserByNameAndPassword(name, password string) (*v1alpha1.User, error) {
 	row := s.db.QueryRow(
 		fmt.Sprintf("SELECT * FROM %susers WHERE name=? and password=?", tabPrefix), name, password)
+	var user v1alpha1.User
+
+	if err := row.Scan(&user.Id, &user.Name, &user.Password); err == sql.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		return nil, merry.Wrap(err)
+	}
+	return &user, nil
+}
+
+func (s *mysqlStorage) GetUserById(id int) (*v1alpha1.User, error) {
+	row := s.db.QueryRow(
+		fmt.Sprintf("SELECT * FROM %susers WHERE id=?", tabPrefix), id)
 	var user v1alpha1.User
 
 	if err := row.Scan(&user.Id, &user.Name, &user.Password); err == sql.ErrNoRows {
