@@ -8,8 +8,9 @@ import (
 	"net/http"
 
 	"whispir/auth-server/pkg/api/v1alpha1"
-	"whispir/auth-server/storage"
 	"whispir/auth-server/pkg/jwt"
+	"whispir/auth-server/storage"
+	"whispir/auth-server/pkg/kong/client"
 )
 
 const (
@@ -117,7 +118,7 @@ func (a *authService) GetAuthCode(req *http.Request) (*osin.Response, []byte) {
 func authPage(query, name string) []byte {
 	buf := bytes.NewBuffer([]byte("<html><body>"))
 	fmt.Fprintf(buf, "Application %s want to query your resources, please login to authorize", name)
-	fmt.Fprintf(buf, "<form action=\"%s?%s\" method=\"POST\">", AuthPath, query)
+	fmt.Fprintf(buf, "<form action=\"%s?%s\" method=\"POST\">", client.GetAPIPathPrefix() + AuthPath, query)
 	buf.Write([]byte("User: <input type=\"text\" name=\"user\" /><br/>"))
 	buf.Write([]byte("Password: <input type=\"password\" name=\"password\" /><br/>"))
 	buf.Write([]byte("<input type=\"submit\" value=\"Allow\"/></input>"))

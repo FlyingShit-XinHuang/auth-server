@@ -18,7 +18,7 @@ func NewAuthCodeClaims() *AuthCodeClaims {
 
 type AuthCodeClaims struct {
 	*CommonClaims
-	State string `json:"state,omitempty"`
+	State       string `json:"state,omitempty"`
 	RedirectURI string `json:"redirect_url,omitempty"`
 }
 

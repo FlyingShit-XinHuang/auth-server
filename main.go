@@ -2,14 +2,18 @@ package main
 
 import (
 	"github.com/spf13/cobra"
+
 	"log"
 	"net/http"
 	"os"
+
 	httptransport "whispir/auth-server/pkg/transport/http"
 	"whispir/auth-server/services/auth"
 	"whispir/auth-server/services/client"
 	"whispir/auth-server/services/user"
 	"whispir/auth-server/storage/mysql"
+	regapi "whispir/auth-server/pkg/kong/client"
+	"fmt"
 )
 
 var (
@@ -48,6 +52,9 @@ func main() {
 }
 
 func startServer() error {
+	if err := regapi.RegisterAPI(); nil != err {
+		return fmt.Errorf("failed to register api:", err)
+	}
 	store, err := mysql.NewStorage(RootOpts.user, RootOpts.password, RootOpts.dbhost, RootOpts.port, RootOpts.dbname)
 	if nil != err {
 		return err

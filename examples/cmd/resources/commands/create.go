@@ -6,11 +6,11 @@ import (
 	"fmt"
 
 	"net/url"
+	"path"
 	"whispir/auth-server/examples/cmd/auth/commands"
 	"whispir/auth-server/pkg/api/v1alpha1"
 	"whispir/auth-server/services/client"
 	"whispir/auth-server/services/user"
-	"path"
 )
 
 var (
@@ -76,8 +76,8 @@ var (
 	}
 
 	createOpts struct {
-		host string
-		port int
+		host       string
+		port       int
 		pathPrefix string
 	}
 
@@ -92,7 +92,7 @@ var (
 	serviceURI *url.URL
 )
 
-func init()  {
+func init() {
 	createCmd.PersistentFlags().StringVarP(&createOpts.host,
 		"host", "H", "localhost", "auth-server host")
 	createCmd.PersistentFlags().IntVarP(&createOpts.port,

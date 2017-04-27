@@ -38,13 +38,13 @@ func (s *mysqlStorage) LoadAuthorize(code string) (*osin.AuthorizeData, error) {
 	}
 
 	data := &osin.AuthorizeData{
-		Client:    client,
-		Code:      code,
-		ExpiresIn: int32(claims.Expire - jwt.TimeFunc().Unix()),
-		Scope:     claims.Scope,
-		State:     claims.State,
-		CreatedAt: time.Unix(claims.IssueAt, 0),
-		UserData: &v1alpha1.User{Id: claims.UserId},
+		Client:      client,
+		Code:        code,
+		ExpiresIn:   int32(claims.Expire - jwt.TimeFunc().Unix()),
+		Scope:       claims.Scope,
+		State:       claims.State,
+		CreatedAt:   time.Unix(claims.IssueAt, 0),
+		UserData:    &v1alpha1.User{Id: claims.UserId},
 		RedirectUri: client.GetRedirectUri(),
 	}
 	if claims.RedirectURI != "" {

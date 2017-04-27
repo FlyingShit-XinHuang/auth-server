@@ -42,7 +42,7 @@ func (s *mysqlStorage) LoadAccess(token string) (*osin.AccessData, error) {
 		CreatedAt:   time.Unix(claims.IssueAt, 0),
 	}
 	if claims.UserId > 0 {
-		data.UserData = &v1alpha1.User{Id:claims.UserId}
+		data.UserData = &v1alpha1.User{Id: claims.UserId}
 	}
 
 	return data, nil

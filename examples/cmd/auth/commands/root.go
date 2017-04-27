@@ -6,8 +6,8 @@ import (
 	"github.com/RangelReale/osincli"
 	"github.com/spf13/cobra"
 	"net/url"
-	"whispir/auth-server/services/auth"
 	"path"
+	"whispir/auth-server/services/auth"
 )
 
 var (
@@ -17,8 +17,8 @@ var (
 	RootOpts struct {
 		Scheme string
 		osincli.ClientConfig
-		host string
-		port int
+		host       string
+		port       int
 		pathPrefix string
 	}
 )
@@ -30,7 +30,6 @@ func init() {
 		"client-id", "", "Client id")
 	RootCmd.PersistentFlags().StringVar(&RootOpts.ClientSecret,
 		"client-secret", "", "Client secret")
-
 
 	RootCmd.PersistentFlags().StringVarP(&RootOpts.host,
 		"host", "H", "localhost", "auth-server host")

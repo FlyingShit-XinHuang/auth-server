@@ -115,3 +115,59 @@ Login as user 'habor' with password 'whispir' to approve. Then the auth server w
 the authorization code and display the access token exchanged with it:
 
 ![result page](result-page.png)
+
+## Run with API gateway Kong
+
+### Start Kong
+
+Start a Cassandra container:
+
+```
+$ docker run -d --name kong-database -p 9042:9042 cassandra:3.10
+```
+
+Start a Kong container:
+
+```
+$ docker run -d --rm --name kong \
+      --link kong-database:kong-database \
+      -e "KONG_DATABASE=cassandra" \
+      -e "KONG_CASSANDRA_CONTACT_POINTS=kong-database" \
+      -p 8000:8000 \
+      -p 8443:8443 \
+      -p 8001:8001 \
+      -p 7946:7946 \
+      -p 7946:7946/udp \
+      kong
+```
+
+### Restart auth server
+
+Stop auth-server container and start a new one with some env:
+
+```
+$ docker run -d --rm --network=container:mysql \
+    -e KONG_HOST='http://<your server IP>:8001' \
+    -e KONG_API_URL='http://<your server IP>:18080' \
+    -e KONG_API_NAME='auth' \
+    auth-server -p demo
+```
+
+KONG_HOST is the host of Kong. KONG_API_URL is the auth-server URL to be registered as "upstream_url" parameter.
+KONG_API_NAME is the API name of auth-server to be registered.
+
+The API will be automatically registered after auth-server started.
+
+The demo CLI could be run with some parameters as following:
+
+```
+$ docker run --rm --network=container:mysql \
+    demo-manage create user -H <your server IP> -P 8000 -p /auth haborhuang whipsir
+    
+$docker run --network=container:mysql --rm \
+    demo-auth cc -p /auth  -P 8000 -H <your server IP> \
+    --client-id="5J-b0tMrTFS3AxLnrCfH5A" --client-secret="67d17382016d4b1b758b43737c49154d"
+```
+
+Kong host can be specified with "-H" parameter and the port with "-P". Use "-p" to specify the path prefix of 
+auth-server API
